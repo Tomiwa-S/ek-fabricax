@@ -10,6 +10,11 @@ const API_BASE_URL =
     : 'https://api.datacite.org';
 
 const cookieName = 'ek-dc'
+
+function getOrigin(req){
+  return req?.url.match(/^(https?:\/\/[^\/]+)/)[1] || '';
+}
+
 export async function checkCookies() {
   const cookieStore = await cookies();
   const cookie = cookieStore.get(cookieName);
@@ -57,8 +62,14 @@ export async function POST(req) {
       // Return error details from DataCite
       return NextResponse.json({ error: data.errors }, { status: response.status });
     }
+    // const origin = getOrigin(req);
+    // const redirectPath = `/doi?data=${encodeURIComponent(JSON.stringify(data))}`;
 
-    return NextResponse.json(data, { status: 200 });
+ 
+
+    // return NextResponse.redirect(origin + redirectPath, 302);
+    const doiObj = data;
+    return NextResponse.json(doiObj, { status: 200 });
   } catch (error) {
     console.error('Error creating DOI:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -71,44 +82,21 @@ export async function POST(req) {
  */
 export async function GET() {
   try {
-    // Fetch both prefixes and DOIs in parallel to reduce latency
-    const [prefixRes, doiRes] = await Promise.all([
-      fetch(`${API_BASE_URL}/prefixes`, {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          Authorization: await commonHeaders(),
-        },
-      }),
-      fetch(`${API_BASE_URL}/dois?prefix=10.80221`, {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          Authorization: await commonHeaders(),
-        },
-      }),
-    ]);
-
-    if (!prefixRes.ok) {
-      throw new Error(`Failed to fetch prefixes: ${prefixRes.status} ${prefixRes.statusText}`);
-    }
-    if (!doiRes.ok) {
-      throw new Error(`Failed to fetch DOIs: ${doiRes.status} ${doiRes.statusText}`);
-    }
-
-    // Parse both JSON responses in parallel
-    const [prefixData, doiData] = await Promise.all([prefixRes.json(), doiRes.json()]);
-
-    // Return combined data (or just one if you only need DOIs)
-    return NextResponse.json(
-      {
-        prefixes: prefixData,
-        dois: doiData,
+    const response = await fetch('https://api.test.datacite.org/dois', {
+      headers: {
+        'Authorization': await getAuthHeader(),
+        'Accept': 'application/json',
       },
-      { status: 200 }
-    );
+    });
+    
+    if (!response.ok) {
+      return NextResponse.json({body: "Something went wrong", status: response.status})
+    }
+    
+    const data = await response.json();
+    return NextResponse.json(data)
   } catch (error) {
-    console.error('GET /api/fabrica error:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({body: error.message})
   }
+
 }

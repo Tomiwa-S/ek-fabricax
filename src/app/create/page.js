@@ -1,30 +1,17 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useForm, useFieldArray } from 'react-hook-form';
+import { doiTypes } from './doiTypes';
 
 const titleTypes = ['Title', 'Subtitle', 'AlternativeTitle', 'TranslatedTitle'];
-const resourceTypeGenerals = [
-  'Audiovisual',
-  'Collection',
-  'Dataset',
-  'Event',
-  'Image',
-  'InteractiveResource',
-  'Model',
-  'PhysicalObject',
-  'Service',
-  'Software',
-  'Sound',
-  'Text',
-  'Workflow',
-  'Other',
-];
+const resourceTypeGenerals = doiTypes;
 const nameIdentifierSchemes = ['ORCID', 'ROR', 'ISNI', 'Other'];
 
 
 export default function CreateDoiFabricaStyle() {
-
+  const router = useRouter();
   const {
     register,
     control,
@@ -206,9 +193,13 @@ export default function CreateDoiFabricaStyle() {
       });
       const data = await res.json();
       if (!res.ok) {
+        
         throw new Error(data.error ? data.error : 'An error occurred.');
       }
-      setSubmitResult(data);
+
+
+      router.push(`/doi?data=${encodeURIComponent(JSON.stringify(data))}`)
+      // setSubmitResult(data);
     } catch (err) {
       console.log(JSON.stringify(err.message))
       setSubmitError(err.message);
