@@ -9,7 +9,6 @@ export default function Home(){
     await fetch('api/auth',{
       method:'DELETE',
     })
-    window.location.reload();
   }
 
 
@@ -18,9 +17,9 @@ export default function Home(){
   useEffect(()=>{
     (async ()=>{
       try{
-        const res = await fetch('api/auth/user');
-        const {user} = await res.json();
-        setIsLoggedIn(user);
+        const res = await fetch('api/auth');
+        const {status} = await res.json();
+        setIsLoggedIn(status==200?true:false);
       }catch(err){}
     })();
   },[])

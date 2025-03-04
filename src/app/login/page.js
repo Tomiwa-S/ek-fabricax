@@ -13,12 +13,14 @@ export default function Login(){
             cache:'no-store'
         }
         ).then(async res=>{
-            const data = await res.json();
-            if(data.body==='authenticated'){
-                console.log('authenticated')
-                window.location = window.origin;
-            }else{
-                return null;
+            if(res.ok){
+                const data = await res.json();
+                if(data.body==='authenticated'){
+                    console.log('authenticated')
+                    window.location = window.origin;
+                }else{
+                    return null;
+                }
             }
         })))()
         
