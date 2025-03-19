@@ -1,19 +1,27 @@
-import React, { useState, FC, FormEvent } from 'react'; 
+import React, { useState, FC, FormEvent, useEffect } from 'react'; 
 import { languages } from './lang';
 
 import { Creator, CreatorType, DOIData, Title } from '../types';
 import { toast, ToastContainer } from 'react-toastify';
 import SignButton from './signButton';
+import Link from 'next/link';
 interface DOIFormProp{
     action: 'create'|'update'
 }
+type Publisher = {
+  name: string;
+  ror_id: string;
+};
+
 const DOIForm = ({action} : DOIFormProp) => {
   // Required Fields
+  const genSuffix = ()=>Math.random().toString(36).substring(2, 8);
   const [prefix] = useState("10.80221");
-  const [suffix, setSuffix] = useState("");
+  const [suffix, setSuffix] = useState(action ==='create' ?genSuffix(): '');
   const [doiState, setDoiState] = useState("draft");
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
+  const [results, setResults] = useState<Publisher[]>([]);
   const [error, setError] = useState<null| string>(null);
 
   const postData = async (payload:DOIData)=>{
@@ -43,6 +51,27 @@ const DOIForm = ({action} : DOIFormProp) => {
       }
       setLoading(false);
     };
+
+    async function fetchOrganizations(org: string): Promise<any> {
+      const url = `/api/ror?org=${encodeURIComponent(org)}`;
+    
+      try {
+        const response = await fetch(url, { method: 'GET' });
+    
+        if (!response.ok) {
+          throw new Error(`Request failed with status ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error("Error fetching organizations:", error);
+        return [];
+      }
+    }
+
+   
+    
   
 
   // Creators – each creator’s fields change based on personType.
@@ -65,6 +94,8 @@ const DOIForm = ({action} : DOIFormProp) => {
   // Other required fields
   const [publisher, setPublisher] = useState("");
   const [publisherRorId, setPublisherRorId] = useState("");
+  const [publisherQuery, setPublisherQuery] = useState<string>('');
+  const [showPubDropdown,setShowPubDropdown] = useState<boolean>(false);
   const [publicationYear, setPublicationYear] = useState("");
   const [resourceTypeGeneral, setResourceTypeGeneral] = useState("");
   const [resourceType, setResourceType] = useState("");
@@ -89,11 +120,19 @@ const DOIForm = ({action} : DOIFormProp) => {
   const notifyError = (err?:string) => toast.error(err ?? error?? 'DOI Creation Failed');
   const notifySuccess = (message:any)=> toast.success(message);
   // Simulate a function that retrieves a ROR id when publisher is clicked.
-  const handlePublisherClick = () => {
-    // In a real app, call your API to get the ROR ID.
-    const simulatedRorId = "ror:05us8j447";
+  const handlePublisherClick = (ror:string) => {
+    const simulatedRorId = ror;
     setPublisherRorId(simulatedRorId);
   };
+
+  useEffect(()=>{
+
+    (async ()=>{
+      await fetchOrganizations(publisherQuery).then(data=>{
+        console.log("Data", data)
+        setResults(data)})
+    })()
+  },[publisherQuery])
 
   // Remove an item from a list field helper
   const removeAt = (index: number, list: any[], setter: (list: any[]) => void) => {
@@ -108,11 +147,14 @@ const DOIForm = ({action} : DOIFormProp) => {
     const doi = `${prefix}/${suffix}`;
 
     const requiredFields = [doi, doiState, url, creators,
-       titles, publisher, publicationYear, resourceTypeGeneral];
+       titles, 
+      //  publisher,
+        publicationYear, resourceTypeGeneral];
 
     for(let i=0; i< requiredFields.length; i++){
       if(!requiredFields[i] ){
         notifyError("Please make sure all the required fields are filled")
+        // notifyError( requiredFields[i] as string)
         return null;
       }
     }
@@ -426,14 +468,15 @@ const DOIForm = ({action} : DOIFormProp) => {
                 type="button"
                 title="Refresh"
                 className="px-2 py-2 text-gray-500 hover:text-gray-700"
-                onClick={() => setSuffix(Math.random().toString(36).substring(2, 8))}
+                onClick={genSuffix}
               >
                 {/* Refresh icon */}
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none"
-                     viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                        d="M4 4v5h.582M20 20v-5h-.581M5.636 18.364A9 9 0 014 12h1a8 8 0 001.636 4.364M18.364 5.636A9 9 0 0120 12h-1a8 8 0 00-1.636-4.364M12 4v1m0 14v1" />
-                </svg>
+                <svg fill="#000000" className="h-5 w-5" version="1.1" id="Capa_1" 
+                xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" 
+                viewBox="0 0 489.645 489.645" xmlSpace="preserve"><g id="SVGRepo_bgCarrier" 
+                strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" 
+                strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> 
+                  <path d="M460.656,132.911c-58.7-122.1-212.2-166.5-331.8-104.1c-9.4,5.2-13.5,16.6-8.3,27c5.2,9.4,16.6,13.5,27,8.3 c99.9-52,227.4-14.9,276.7,86.3c65.4,134.3-19,236.7-87.4,274.6c-93.1,51.7-211.2,17.4-267.6-70.7l69.3,14.5 c10.4,2.1,21.8-4.2,23.9-15.6c2.1-10.4-4.2-21.8-15.6-23.9l-122.8-25c-20.6-2-25,16.6-23.9,22.9l15.6,123.8 c1,10.4,9.4,17.7,19.8,17.7c12.8,0,20.8-12.5,19.8-23.9l-6-50.5c57.4,70.8,170.3,131.2,307.4,68.2 C414.856,432.511,548.256,314.811,460.656,132.911z"></path> </g> </g></svg>
               </button>
               <button
                 type="button"
@@ -543,7 +586,7 @@ const DOIForm = ({action} : DOIFormProp) => {
           <p className="text-sm text-gray-600 mb-2">
             The name of the entity that holds or publishes the resource.
           </p>
-          <select
+          {/* <select
             value={publisher}
             required
             onChange={(e) => setPublisher(e.target.value)}
@@ -553,10 +596,36 @@ const DOIForm = ({action} : DOIFormProp) => {
             <option value="">Select publisher</option>
             <option value="Publisher 1">Publisher 1</option>
             <option value="Publisher 2">Publisher 2</option>
-          </select>
-          {publisherRorId && (
+          </select> */}
+          <input
+            type="text"
+            placeholder="Type a publisher..."
+            className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none"
+            value={publisherQuery}
+            onChange={(e) => {
+              setPublisherQuery(e.target.value);
+              setShowPubDropdown(true);
+            }}
+          />
+          {showPubDropdown && results.length > 0 && (
+          <ul className="top-12 left-0 w-full bg-white border border-gray-300 rounded shadow-md">
+            {results.map((publisher) => (
+              <li
+                key={publisher.ror_id + publisher.name}
+                className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
+                onMouseDown={() => {handlePublisherClick(publisher.ror_id); setShowPubDropdown(false)
+                  setPublisherQuery(publisher.name);
+                }}
+              >
+                {publisher.name}
+              </li>
+          ))}
+          </ul>
+        )}
+        {publisherRorId.trim()!=='' && (
             <p className="mt-2 text-sm text-gray-700">
-              ROR ID: <span className="font-mono">{publisherRorId}</span>
+              ROR ID: <span className="font-mono"><Link href={publisherRorId} target='blank'>
+              {publisherRorId}</Link></span>
             </p>
           )}
         </div>

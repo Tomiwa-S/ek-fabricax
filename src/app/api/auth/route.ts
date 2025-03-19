@@ -1,5 +1,6 @@
+'use server';
 import jwt from 'jsonwebtoken';
-import { apiBaseURL, isProduction, secretJWTKey } from '@/app/globalVariables';
+import { apiBaseURL, isProduction, secretJWTKey, mdsBaseURL, isP } from '@/app/globalVariables';
 import { cookies } from 'next/headers';
 import { cookieName } from '@/app/globalVariables';
 import { NextRequest, NextResponse } from 'next/server';
@@ -52,13 +53,44 @@ export async function  DELETE(req:NextRequest) {
     return NextResponse.json({status:'Signed Out'})
 }
 
-export async function POST(req:NextRequest) {
+async function checkDataCiteCredentials(repoId: string, password: string): Promise<boolean> {
 
+  try {
+    const response = await fetch(`${mdsBaseURL}/doi`, {
+      method: 'GET',
+      headers: {
+        'Authorization': 'Basic ' + btoa(`${repoId}:${password}`),
+        'Content-Type': 'application/json',
+      },
+    });
+
+    console.log('response', response)
+    if (response.ok) {
+      return true;
+    }
+
+    if (response.status === 401 || response.status === 403) {
+      return false;
+    }
+    throw new Error(`Unexpected response status: ${response.status}`);
+  } catch (error) {
+
+    throw error;
+  }
+}
+
+
+
+
+export async function POST(req:NextRequest) {
+    console.log("ISP", isP)
     const data =await req.json();
 
     console.log('Secret', secretJWTKey);
+    console.log('SecretAgain', process.env.SECRET_KEY);
 
-    const isAuthenticated = await checkCredentials(data.id, data.password);
+    // const isAuthenticated = await checkCredentials(data.id, data.password);
+    const isAuthenticated = await checkDataCiteCredentials(data.id, data.password);
     if (isAuthenticated) {
       const jwtToken = jwt.sign(data, secretJWTKey , { expiresIn: '1h' });
       const cookieStore = await cookies();
