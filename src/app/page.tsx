@@ -11,8 +11,8 @@ export default function Home() {
       <div className={`flex w-full h-screen justify-center items-center ${effect}`}>
         <SignButton/>
           <div>
-              <div className={listTW}><Link href={'doi/create'}>Create new DOI</Link></div>
-              <div className={listTW}>View DOIs</div>
+              <div className={listTW}><Link href={'/doi/create'}>Create new DOI</Link></div>
+              <div className={listTW}><Link href={'/doi'}>View DOIs</Link></div>
           </div>
       </div>
   </> );

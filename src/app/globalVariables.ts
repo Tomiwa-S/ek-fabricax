@@ -7,5 +7,7 @@ export const apiBaseURL: string =
 export const mdsBaseURL: string = 
     isProduction ?  'https://mds.datacite.org':  'https://mds.test.datacite.org';
 
+export const handleBaseUrl: string =
+    isProduction ? "https://handle.datacite.org":"https://handle.test.datacite.org";
 // export const secretJWTKey = process.env.SECRET_KEY as string;
 export const secretJWTKey = 'unknown';

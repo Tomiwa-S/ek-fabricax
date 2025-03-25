@@ -9,9 +9,7 @@ export async function checkCookies() {
     const cookieStore = await cookies();
     const cookie = cookieStore.get(cookieName);
     if (!cookie) return false;
-    console.log("Cookies", cookie)
     const { id, password } : any = jwt.verify(cookie.value, secretJWTKey );
-    console.log("Credentials", { id, password })
     if(!id || !password) return false;
     return {id, password};
 }
@@ -28,13 +26,13 @@ async function checkCredentials(repositoryId:string, password:string) {
         },
       });
 
-    
+      console.log('response', response)
       if (response.ok) {
-        console.log('response', response)
+        
         console.log("Credentials are valid.");
         return true;
       } else {
-        console.log('response', response)
+
         console.error("Authentication failed:", response.status, response.statusText);
         return false;
       }

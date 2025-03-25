@@ -3,6 +3,7 @@ import { languages } from './lang';
 
 import { Creator, CreatorType, DOIData, Title } from '../types';
 import { toast, ToastContainer } from 'react-toastify';
+import { useRouter } from 'next/navigation';
 import SignButton from './signButton';
 import Link from 'next/link';
 interface DOIFormProp{
@@ -13,16 +14,22 @@ type Publisher = {
   ror_id: string;
 };
 
+async function getPrefixes(){
+  const response = await fetch(`/api/fabrica/prefix`);
+  return await response.json();
+}
+
 const DOIForm = ({action} : DOIFormProp) => {
   // Required Fields
   const genSuffix = ()=>Math.random().toString(36).substring(2, 8);
-  const [prefix] = useState("10.80221");
+  const [prefix, setPrefix] = useState("");
   const [suffix, setSuffix] = useState(action ==='create' ?genSuffix(): '');
   const [doiState, setDoiState] = useState("draft");
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<Publisher[]>([]);
   const [error, setError] = useState<null| string>(null);
+  const router = useRouter();
 
   const postData = async (payload:DOIData)=>{
     try {
@@ -31,14 +38,18 @@ const DOIForm = ({action} : DOIFormProp) => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
         });
-        const data = await res.json();
+        
         if (!res.ok) {
           
           console.error(res);
           notifyError()
           return;
         }
+        const {data} = await res.json();
+        const {id} = data;
         notifySuccess("DOI Successfully Created");
+        if (id) router.push(`/doi/${encodeURIComponent(id)}`)
+
         return;
   
   
@@ -129,8 +140,8 @@ const DOIForm = ({action} : DOIFormProp) => {
 
     (async ()=>{
       await fetchOrganizations(publisherQuery).then(data=>{
-        console.log("Data", data)
         setResults(data)})
+      await getPrefixes().then(res=>setPrefix(res[0]))
     })()
   },[publisherQuery])
 
@@ -193,7 +204,6 @@ const DOIForm = ({action} : DOIFormProp) => {
       }
     };
 
-    console.log("Submitting payload:", JSON.stringify(payload, null, 2));
     await postData(payload)
     // setMessage("DOI created successfully!");
   };
@@ -468,7 +478,7 @@ const DOIForm = ({action} : DOIFormProp) => {
                 type="button"
                 title="Refresh"
                 className="px-2 py-2 text-gray-500 hover:text-gray-700"
-                onClick={genSuffix}
+                onClick={()=>setSuffix(()=>genSuffix())}
               >
                 {/* Refresh icon */}
                 <svg fill="#000000" className="h-5 w-5" version="1.1" id="Capa_1" 
@@ -604,6 +614,7 @@ const DOIForm = ({action} : DOIFormProp) => {
             value={publisherQuery}
             onChange={(e) => {
               setPublisherQuery(e.target.value);
+              setPublisher(e.target.value)
               setShowPubDropdown(true);
             }}
           />
@@ -615,6 +626,7 @@ const DOIForm = ({action} : DOIFormProp) => {
                 className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
                 onMouseDown={() => {handlePublisherClick(publisher.ror_id); setShowPubDropdown(false)
                   setPublisherQuery(publisher.name);
+                  setPublisher(publisher.name)
                 }}
               >
                 {publisher.name}
