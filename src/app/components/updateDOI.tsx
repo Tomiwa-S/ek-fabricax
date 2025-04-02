@@ -30,7 +30,7 @@ async function fetchDOIMetadata(id: string) {
 }
 
 const UpdateDOIForm: FC<DOIFormProp> = ({ action, doiId }) => {
-  // Generate a random suffix only for create mode.
+
   const genSuffix = () => Math.random().toString(36).substring(2, 8);
 
   // Form state variables.
@@ -105,6 +105,7 @@ const UpdateDOIForm: FC<DOIFormProp> = ({ action, doiId }) => {
           // Assume response is structured as: { data: { id, attributes: { doi, state, url, ... } } }
         //   const attributes = data.data.attributes;
           // Split the doi to get prefix and suffix.
+          console.log("Attributes", attributes)
           const doi = attributes.doi;
           const parts = doi.split('/');
           if (parts.length === 2) {
@@ -116,9 +117,10 @@ const UpdateDOIForm: FC<DOIFormProp> = ({ action, doiId }) => {
           setCreators(attributes.creators);
           setTitles(attributes.titles);
           setPublisher(attributes.publisher);
+          setPublisherQuery(attributes.publisher)
           setPublisherRorId(attributes.publisherRorId);
           setPublicationYear(attributes.publicationYear);
-          setResourceTypeGeneral(attributes.resourceTypeGeneral);
+          setResourceTypeGeneral(attributes.types);
           setResourceType(attributes.resourceType);
           setSubjects(attributes.subjects || []);
           setContributors(attributes.contributors || []);
@@ -175,7 +177,7 @@ const UpdateDOIForm: FC<DOIFormProp> = ({ action, doiId }) => {
       publisher,
       publisherRorId,
       publicationYear,
-      resourceTypeGeneral,
+      type:resourceTypeGeneral,
       resourceType,
       subjects,
       contributors,
@@ -262,11 +264,11 @@ const UpdateDOIForm: FC<DOIFormProp> = ({ action, doiId }) => {
           <input
             type="text"
             placeholder="Name Identifier (URL)"
-            value={creator.nameIdentifier}
+            value={creator.nameIdentifier ||''}
             required
             onChange={(e) => {
               const newCreators = [...creators];
-              newCreators[index].nameIdentifier = e.target.value;
+              newCreators[index].nameIdentifier = e.target.value||'';
               setCreators(newCreators);
             }}
             className="w-full border rounded px-3 py-2 mt-1"

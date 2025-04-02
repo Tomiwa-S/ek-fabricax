@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import {apiBaseURL} from '../../globalVariables';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import { excludeKeys } from './exclude';
 
 function ArrangeList({object}:any){
 
@@ -36,7 +37,7 @@ function ArrangeList({object}:any){
 export default function DoiPage() {
   const {doi} = useParams();
   const [attributes, setAttribues] = useState<any>(false);
-  const skipFields = ['xml','container', 'schemaVersion','source'];
+  const skipFields = ['xml','container', 'schemaVersion','source',...excludeKeys];
   const linkKeys = ['url']
 
   async function fetchDOI() {
@@ -59,10 +60,13 @@ export default function DoiPage() {
   return (
     <div className="min-h-screen bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 flex items-center justify-center p-4">
       <div className='fixed top-4 left-2'>
-        <button className={floatingButtons}>
-          <Link href={`/doi/update?id=${doi}`}>Edit</Link>
-        </button>
-        <button className={`${floatingButtons} bg-red-500`} onClick={deleteDOI}>Delete</button>
+        <form className='bg-white p-2 rounded-md pr-12'>
+          <button className={floatingButtons}>
+            <Link href={`/doi/update?id=${doi}`}>Edit</Link>
+          </button>
+          <button className={`${floatingButtons} bg-red-500`}
+          onClick={deleteDOI}>Delete</button>
+        </form>
       </div>
       <div className="bg-white p-6 rounded-lg shadow-xl max-w-3xl w-full">
         <h1 className="text-3xl font-bold text-center text-indigo-600 mb-6">DOI Metadata</h1>

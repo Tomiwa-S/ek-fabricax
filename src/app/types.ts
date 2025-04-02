@@ -17,30 +17,30 @@ export interface Title {
 }
 
 export interface DOIAttributes {
-  doi: string;
-  state: string;
-  url: string;
-  creators: Creator[];
-  titles: Title[];
-  publisher: string;
+  doi?: string;
+  state?: string;
+  url?: string;
+  creators?: Creator[];
+  titles?: Title[];
+  publisher?: string;
   publisherRorId?: string;
   publicationYear: string;
-  resourceTypeGeneral: string;
-  resourceType: string;
-  subjects: string[];
-  contributors: string[];
-  dates: string[];
-  relatedIdentifiers: string[];
-  descriptions: string[];
-  geolocations: string[];
-  language: string;
-  alternateIdentifiers: string[];
-  rights: string[];
-  sizes: string[];
-  formats: string[];
-  version: string;
-  fundingReferences: string[];
-  relatedItems: string[];
+  resourceTypeGeneral?: string;
+  resourceType?: string;
+  subjects?: string[];
+  contributors?: string[];
+  dates?: string[];
+  relatedIdentifiers?: string[];
+  descriptions?: string[];
+  geolocations?: string[];
+  language?: string;
+  alternateIdentifiers?: string[];
+  rights?: string[];
+  sizes?: string[];
+  formats?: string[];
+  version?: string;
+  fundingReferences?: string[];
+  relatedItems?: string[];
 }
 
 export interface DOIData {

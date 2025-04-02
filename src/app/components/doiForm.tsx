@@ -179,7 +179,7 @@ const DOIForm = ({action} : DOIFormProp) => {
       publisher,
       publisherRorId,
       publicationYear,
-      resourceTypeGeneral,
+      types:resourceTypeGeneral,
       resourceType,
       subjects,
       contributors,
