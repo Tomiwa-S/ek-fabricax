@@ -5,7 +5,7 @@ import { cookies } from 'next/headers';
 import { cookieName } from '@/app/globalVariables';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function checkCookies() {
+export async function checkCookies(): Promise<false | { id: any; password: any; }> {
     const cookieStore = await cookies();
     const cookie = cookieStore.get(cookieName);
     if (!cookie) return false;
@@ -15,7 +15,7 @@ export async function checkCookies() {
 }
 
 
-async function checkCredentials(repositoryId:string, password:string) {
+async function checkCredentials(repositoryId:string, password:string): Promise<boolean> {
     const credentials = `${repositoryId}:${password}`;
 
      const response = await fetch(`${apiBaseURL}/dois`, {
@@ -26,9 +26,7 @@ async function checkCredentials(repositoryId:string, password:string) {
         },
       });
 
-      console.log('response', response)
       if (response.ok) {
-        
         console.log("Credentials are valid.");
         return true;
       } else {
