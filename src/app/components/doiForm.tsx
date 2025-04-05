@@ -1,7 +1,7 @@
 import React, { useState, FC, FormEvent, useEffect } from 'react'; 
 import { languages } from './lang';
 
-import { Creator, CreatorType, DOIData, Title } from '../types';
+import { Creator, CreatorType, DOIData, NameIdentifier, PublisherClass, Title } from '../types';
 import { toast, ToastContainer } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 import SignButton from './signButton';
@@ -88,7 +88,7 @@ const DOIForm = ({action} : DOIFormProp) => {
   // Creators – each creator’s fields change based on personType.
   const [creators, setCreators] = useState<Creator[]>([
     {
-      nameIdentifier: "",
+      nameIdentifiers: [ new NameIdentifier()],
       personType: "Unknown",
       givenName: "",
       familyName: "",
@@ -162,6 +162,8 @@ const DOIForm = ({action} : DOIFormProp) => {
       //  publisher,
         publicationYear, resourceTypeGeneral];
 
+    console.log(creators)
+
     for(let i=0; i< requiredFields.length; i++){
       if(!requiredFields[i] ){
         notifyError("Please make sure all the required fields are filled")
@@ -176,10 +178,12 @@ const DOIForm = ({action} : DOIFormProp) => {
       url,
       creators,
       titles,
-      publisher,
+      publisher: new PublisherClass(),
       publisherRorId,
       publicationYear,
-      types:resourceTypeGeneral,
+      types:{
+        resourceTypeGeneral:resourceTypeGeneral
+      },
       resourceType,
       subjects,
       contributors,
@@ -196,7 +200,8 @@ const DOIForm = ({action} : DOIFormProp) => {
       fundingReferences,
       relatedItems
     };
-
+    attributes.publisher.addROR(publisherRorId);
+    console.log("Attributes", attributes.publisher)
     const payload: DOIData = {
       data: {
         type: "dois",
@@ -231,11 +236,11 @@ const DOIForm = ({action} : DOIFormProp) => {
           <input
             type="text"
             placeholder="Name Identifier (URL)"
-            value={creator.nameIdentifier}
+            value={creator.nameIdentifiers[index].nameIdentifier }
             required
             onChange={(e) => {
               const newCreators = [...creators];
-              newCreators[index].nameIdentifier = e.target.value;
+              newCreators[index].nameIdentifiers[index].addId(e.target.value);
               setCreators(newCreators);
             }}
             className="w-full border rounded px-3 py-2 mt-1"
@@ -319,7 +324,7 @@ const DOIForm = ({action} : DOIFormProp) => {
         </div>
         <div className="mt-2">
           <label className="block text-sm font-medium">Affiliation</label>
-          <select
+          {/* <select
             value={creator.affiliation}
             onChange={(e) => {
               const newCreators = [...creators];
@@ -331,7 +336,16 @@ const DOIForm = ({action} : DOIFormProp) => {
             <option value="">Select Affiliation</option>
             <option value="Affiliation 1">Affiliation 1</option>
             <option value="Affiliation 2">Affiliation 2</option>
-          </select>
+          </select> */}
+          <input
+            value={creator.affiliation}
+            onChange={(e) => {
+              const newCreators = [...creators];
+              newCreators[index].affiliation = e.target.value;
+              setCreators(newCreators);
+            }}
+            className="w-full border rounded px-3 py-2 mt-1"
+          />
         </div>
       </div>
     );
@@ -569,7 +583,7 @@ const DOIForm = ({action} : DOIFormProp) => {
           onClick={() =>
             setCreators([
               ...creators,
-              { nameIdentifier: "", personType: "Unknown", givenName: "", familyName: "", name: "", affiliation: "" }
+              { nameIdentifiers: [], personType: "Unknown", givenName: "", familyName: "", name: "", affiliation: "" }
             ])
           }
           className="inline-flex items-center px-3 py-2 border border-blue-500 text-blue-500 rounded hover:bg-blue-500 hover:text-white"

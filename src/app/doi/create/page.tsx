@@ -6,7 +6,7 @@ export default function createDOI(){
 
     return (<div className="w-full p-[5rem]">
         
-        <Link className="underline cursor-pointer" href={'/'}>Back</Link>
+        <Link className="underline cursor-pointer py-8" href={'/'}>{`<< Home`}</Link>
         <DOIForm action="create"/>
     </div>)
 }

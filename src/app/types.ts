@@ -1,7 +1,28 @@
 export type CreatorType = 'Personal' | 'Organizational' | 'Unknown';
 
+export class NameIdentifier  {
+    schemeUri= "https://orcid.org";
+    nameIdentifier = "";
+    nameIdentifierScheme= "ORCID";
+    addId(url:string){
+      this.nameIdentifier=url;
+    }
+}
+
+export class PublisherClass{
+  
+    name = "DataCite";
+    publisherIdentifier="";
+    publisherIdentifierScheme="ROR";
+    schemeUri= "https://ror.org/";
+    addROR(ror:string){
+      this.publisherIdentifier=ror;
+    }
+
+}
+
 export interface Creator {
-  nameIdentifier: string;
+  nameIdentifiers: NameIdentifier[];
   personType: CreatorType;
   // For personal, show given and family names; for others these may be omitted.
   givenName?: string;
@@ -22,7 +43,7 @@ export interface DOIAttributes {
   url?: string;
   creators?: Creator[];
   titles?: Title[];
-  publisher?: string;
+  publisher?: PublisherClass;
   publisherRorId?: string;
   publicationYear: string;
   resourceTypeGeneral?: string;

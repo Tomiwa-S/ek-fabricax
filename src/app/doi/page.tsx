@@ -58,9 +58,22 @@ export default function Page() {
         setAllDoiItems(res)
         setDoiItems(res)})
     },[])
+
+    function bg(state:string){
+      switch(state){
+        case('draft'):
+          return 'red';
+        case('findable'):
+          return 'blue';
+        default:
+          return 'green';
+      }
+        
+    }
+    const effect = "bg-transparent wave-animation bg-gradient-to-r from-[#3A4CB4] to-[#E91E63] opacity-90 transition-all duration-300";
     
     return (
-      <div className="w-full p-4 flex">
+      <div className={`w-full p-4 flex ${effect}`}>
         <div className="p-4 cols-4">
 
           <Link href={`/doi/create`} className="bg-green-500 text-white p-2 rounded-full mt-12 font-semibold text-lg border-b border-gray-200 pb-1 mb-3">
@@ -103,16 +116,21 @@ export default function Page() {
         <section className="p-4  cols-8">
           {
             doiItems?.map(item=>(
-              <span key={item.doi} className="block border-2 p-4 rounded-md border-blue-500 my-5">
+              <span key={item.doi} className="block text-gray-800 bg-[rgba(255,255,255,0.5)] border-2 p-4 rounded-md border-blue-500 my-5">
+                <div className="flex relative justify-end">
+                  <span className={`border-2 rounded-full
+                    bg-${bg(item.state)}-500
+                    px-4 py-[2px] text-white`}>{item.state}</span>
+                </div>
                 <p>Title: {item.title}</p>
                 <p>Author: {item.author}</p>
-                <p>Publication Year{item?.publicationYear?.toString()??'N/A'}</p>
+                <p>Publication Year: {item?.publicationYear?.toString()??'N/A'}</p>
                 <p>DOI: {item.doi}</p>
-                <p>State: {item.state}</p>
+                {/* <p>State: {item.state}</p> */}
                 {item.state === 'draft' ? (
                   <p className='cursor-pointer' onClick={()=>deleteDOI(item.doi)}>Delete</p>
                 ):(
-                  <Link href={handleBaseUrl+'/'+ encodeURIComponent(item.doi)} target="_blank">{`${handleBaseUrl}/${item.doi}`}</Link>
+                  <Link className="underline" href={handleBaseUrl+'/'+ encodeURIComponent(item.doi)} target="_blank">{`${handleBaseUrl}/${item.doi}`}</Link>
                 )}
                 <p>
                   <Link href={`/doi/${encodeURIComponent(item.doi)}`}>View</Link>
