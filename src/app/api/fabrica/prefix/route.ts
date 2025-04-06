@@ -1,9 +1,8 @@
 import { apiBaseURL } from '@/app/globalVariables';
-import { NextResponse } from 'next/server';
-import { checkCookies } from '../../auth/route';
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextRequest, NextResponse } from 'next/server';
+import { checkCookies } from '../../auth/utils';
 
-export async function GET(req:NextApiRequest){
+export async function GET(req:NextRequest){
     const cookies = await checkCookies();
     if(!cookies) return NextResponse.json({body:"No Organization Found"}, {status:403});
     const {id, password} = cookies;

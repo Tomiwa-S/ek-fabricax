@@ -201,7 +201,7 @@ const DOIForm = ({action} : DOIFormProp) => {
       relatedItems
     };
     attributes.publisher.addROR(publisherRorId);
-    console.log("Attributes", attributes.publisher)
+    // console.log("Attributes", attributes.publisher)
     const payload: DOIData = {
       data: {
         type: "dois",

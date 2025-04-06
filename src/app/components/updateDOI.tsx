@@ -1,6 +1,6 @@
 import React, { useState, FC, FormEvent, useEffect } from 'react';
 import { languages } from './lang';
-import { Creator, CreatorType, DOIData, Title } from '../types';
+import { Creator, CreatorType, DOIData, PublisherClass, Title } from '../types';
 import { toast, ToastContainer } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 import SignButton from './signButton';
@@ -45,7 +45,7 @@ const UpdateDOIForm: FC<DOIFormProp> = ({ action, doiId }) => {
 
   // Creators and Titles, etc.
   const [creators, setCreators] = useState<Creator[]>([{
-    nameIdentifier: "",
+    nameIdentifiers: [],
     personType: "Unknown",
     givenName: "",
     familyName: "",
@@ -174,10 +174,12 @@ const UpdateDOIForm: FC<DOIFormProp> = ({ action, doiId }) => {
       url,
       creators,
       titles,
-      publisher,
+      publisher: new PublisherClass(),
       publisherRorId,
       publicationYear,
-      type:resourceTypeGeneral,
+      type:{
+        'resourceTypeGeneral':resourceTypeGeneral
+      },
       resourceType,
       subjects,
       contributors,
@@ -264,11 +266,11 @@ const UpdateDOIForm: FC<DOIFormProp> = ({ action, doiId }) => {
           <input
             type="text"
             placeholder="Name Identifier (URL)"
-            value={creator.nameIdentifier ||''}
+            value={creator.nameIdentifiers[index].nameIdentifier  ||''}
             required
             onChange={(e) => {
               const newCreators = [...creators];
-              newCreators[index].nameIdentifier = e.target.value||'';
+              newCreators[index].nameIdentifiers[index].nameIdentifier  = e.target.value||'';
               setCreators(newCreators);
             }}
             className="w-full border rounded px-3 py-2 mt-1"
@@ -624,7 +626,7 @@ const UpdateDOIForm: FC<DOIFormProp> = ({ action, doiId }) => {
             type="button"
             onClick={() =>
               setCreators([...creators, {
-                nameIdentifier: "",
+                nameIdentifiers: [],
                 personType: "Unknown",
                 givenName: "",
                 familyName: "",

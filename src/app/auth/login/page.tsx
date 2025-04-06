@@ -1,5 +1,5 @@
 'use client';
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useState } from "react";
 import Image from "next/image";
 import LoadingPage from "@/app/components/loading";
 
