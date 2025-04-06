@@ -266,11 +266,11 @@ const UpdateDOIForm: FC<DOIFormProp> = ({ action, doiId }) => {
           <input
             type="text"
             placeholder="Name Identifier (URL)"
-            value={creator.nameIdentifiers[index].nameIdentifier  ||''}
+            value={creator.nameIdentifiers[index]?.nameIdentifier  ||''}
             required
             onChange={(e) => {
               const newCreators = [...creators];
-              newCreators[index].nameIdentifiers[index].nameIdentifier  = e.target.value||'';
+              newCreators[index].nameIdentifiers[index].addId(e.target.value);
               setCreators(newCreators);
             }}
             className="w-full border rounded px-3 py-2 mt-1"

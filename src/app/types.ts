@@ -40,6 +40,7 @@ export interface Title {
 export interface DOIAttributes {
   doi?: string;
   state?: string;
+  event?: string;
   url?: string;
   creators?: Creator[];
   titles?: Title[];

@@ -40,6 +40,7 @@ export default function DoiPage() {
   const skipFields = ['xml','container', 'schemaVersion','source',...excludeKeys];
   const linkKeys = ['url']
 
+
   async function fetchDOI() {
     const res = await fetch(`/api/fabrica?doi=${doi}`); 
     // if(!res.ok) window.location = '/' as (string & Location);

@@ -24,7 +24,7 @@ const DOIForm = ({action} : DOIFormProp) => {
   const genSuffix = ()=>Math.random().toString(36).substring(2, 8);
   const [prefix, setPrefix] = useState("");
   const [suffix, setSuffix] = useState(action ==='create' ?genSuffix(): '');
-  const [doiState, setDoiState] = useState("draft");
+  const [doiState, setDoiState] = useState<'draft'|'register'|'publish'>("draft");
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<Publisher[]>([]);
@@ -174,7 +174,7 @@ const DOIForm = ({action} : DOIFormProp) => {
 
     const attributes = {
       doi,
-      state: doiState,
+      event: doiState,
       url,
       creators,
       titles,
@@ -533,7 +533,7 @@ const DOIForm = ({action} : DOIFormProp) => {
             </a>
           </p>
           <div className="flex items-center space-x-4">
-            {["draft", "registered", "findable"].map((state) => (
+            {["draft", "register", "publish"].map((state:any) => (
               <label key={state} className="flex items-center">
                 <input
                   type="radio"
@@ -546,8 +546,8 @@ const DOIForm = ({action} : DOIFormProp) => {
                 <span className="text-sm">
                   {state.charAt(0).toUpperCase() + state.slice(1)}
                   {state === "draft" && <span className="text-xs text-gray-500 ml-1">(only visible in Fabrica, DOI can be deleted)</span>}
-                  {state === "registered" && <span className="text-xs text-gray-500 ml-1">(registered with the DOI Resolver)</span>}
-                  {state === "findable" && <span className="text-xs text-gray-500 ml-1">(registered and indexed)</span>}
+                  {state === "register" && <span className="text-xs text-gray-500 ml-1">(registered with the DOI Resolver)</span>}
+                  {state === "publish" && <span className="text-xs text-gray-500 ml-1">(registered and indexed)</span>}
                 </span>
               </label>
             ))}
