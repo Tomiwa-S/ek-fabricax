@@ -32,7 +32,7 @@ export default function Page() {
       const state = event.currentTarget.checked;
       if(state) {
         draftRef.current ? draftRef.current.disabled=true : null;
-        setDoiItems(()=>alldDoiItems?.filter(doi=>doi.state==='findable'))
+        setDoiItems(()=>alldDoiItems?.filter(doi=>doi.state!=='draft'))
       }
       else {
         draftRef.current ? draftRef.current.disabled=false : null
@@ -64,9 +64,9 @@ export default function Page() {
         case('draft'):
           return 'red';
         case('findable'):
-          return 'blue';
-        default:
           return 'green';
+        default:
+          return 'blue';
       }
         
     }

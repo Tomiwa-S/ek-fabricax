@@ -33,8 +33,8 @@ export interface Creator {
 
 export interface Title {
   title: string;
-  titleType: string;
-  language: string;
+  // titleType: string;
+  // language: string;
 }
 
 export interface DOIAttributes {

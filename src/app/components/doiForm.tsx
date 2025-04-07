@@ -1,6 +1,6 @@
 import React, { useState, FC, FormEvent, useEffect } from 'react'; 
 import { languages } from './lang';
-
+import removeEmptyFields from './rmEmptyFields'
 import { Creator, CreatorType, DOIData, NameIdentifier, PublisherClass, Title } from '../types';
 import { toast, ToastContainer } from 'react-toastify';
 import { useRouter } from 'next/navigation';
@@ -33,6 +33,8 @@ const DOIForm = ({action} : DOIFormProp) => {
 
   const postData = async (payload:DOIData)=>{
     try {
+        // console.log("Payload", payload)
+        // return;
         const res = await fetch('/api/fabrica', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -99,7 +101,9 @@ const DOIForm = ({action} : DOIFormProp) => {
 
   // Titles
   const [titles, setTitles] = useState<Title[]>([
-    { title: "", titleType: "", language: "" }
+    { title: "",
+      //  titleType: "", language: ""
+       }
   ]);
 
   // Other required fields
@@ -162,7 +166,7 @@ const DOIForm = ({action} : DOIFormProp) => {
       //  publisher,
         publicationYear, resourceTypeGeneral];
 
-    console.log(creators)
+    // console.log(creators)
 
     for(let i=0; i< requiredFields.length; i++){
       if(!requiredFields[i] ){
@@ -174,7 +178,7 @@ const DOIForm = ({action} : DOIFormProp) => {
 
     const attributes = {
       doi,
-      event: doiState,
+      "event": doiState,
       url,
       creators,
       titles,
@@ -208,6 +212,10 @@ const DOIForm = ({action} : DOIFormProp) => {
         attributes
       }
     };
+
+    removeEmptyFields(payload);
+    // console.log("removed",payload)
+    // return;
 
     await postData(payload)
     // setMessage("DOI created successfully!");
@@ -382,7 +390,7 @@ const DOIForm = ({action} : DOIFormProp) => {
         />
       </div>
       <div className="mt-2">
-        <label className="block text-sm font-medium">Title Type</label>
+        {/* <label className="block text-sm font-medium">Title Type</label>
         <select
           value={title.titleType}
           onChange={(e) => {
@@ -395,10 +403,10 @@ const DOIForm = ({action} : DOIFormProp) => {
           <option value="">Select Title Type</option>
           <option value="Main">Main</option>
           <option value="Subtitle">Subtitle</option>
-        </select>
+        </select> */}
       </div>
       <div className="mt-2">
-        <label className="block text-sm font-medium">Language</label>
+        {/* <label className="block text-sm font-medium">Language</label>
         <select
           value={title.language}
           onChange={(e) => {
@@ -415,7 +423,7 @@ const DOIForm = ({action} : DOIFormProp) => {
             return 0;
             }).map(value=>(
             <option key={value[0]} value={value[0]}>{value[1]}</option>))}
-        </select>
+        </select> */}
       </div>
     </div>
   );
@@ -597,7 +605,9 @@ const DOIForm = ({action} : DOIFormProp) => {
         {titles.map((title, index) => renderTitleFields(title, index))}
         <button
           type="button"
-          onClick={() => setTitles([...titles, { title: "", titleType: "", language: "" }])}
+          onClick={() => setTitles([...titles, { title: "", 
+            // titleType: "", language: "" 
+          }])}
           className="inline-flex items-center px-3 py-2 border border-blue-500 text-blue-500 rounded hover:bg-blue-500 hover:text-white"
         >
           Add another title

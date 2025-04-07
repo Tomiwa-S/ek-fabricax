@@ -1,11 +1,13 @@
 import { apiBaseURL } from '@/app/globalVariables';
 import { NextRequest, NextResponse } from 'next/server';
 import { checkCookies } from '../auth/utils';
-
+import { sample } from './sample';
 export async function POST(req: NextRequest) {
 
   try{
     const payload  = await req.json();
+    // const payload = sample;
+    console.log("PAYLOAD", payload)
     const {id, password}:any = await checkCookies();
     const credentials = `${id}:${password}`;
     const authHeader = "Basic " + Buffer.from(credentials).toString('base64');
@@ -28,6 +30,7 @@ export async function POST(req: NextRequest) {
 
 
     if (!response.ok) {
+      console.log(data)
 
         return NextResponse.json({ error: data.errors }, { status: response.status });
     }

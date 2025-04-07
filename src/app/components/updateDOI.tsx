@@ -52,7 +52,9 @@ const UpdateDOIForm: FC<DOIFormProp> = ({ action, doiId }) => {
     name: "",
     affiliation: ""
   }]);
-  const [titles, setTitles] = useState<Title[]>([{ title: "", titleType: "", language: "" }]);
+  const [titles, setTitles] = useState<Title[]>([{ title: "",
+    //  titleType: "", language: ""
+     }]);
   const [publisher, setPublisher] = useState("");
   const [publisherRorId, setPublisherRorId] = useState<string>("");
   const [publisherQuery, setPublisherQuery] = useState<string>('');
@@ -402,7 +404,7 @@ const UpdateDOIForm: FC<DOIFormProp> = ({ action, doiId }) => {
         />
       </div>
       <div className="mt-2">
-        <label className="block text-sm font-medium">Title Type</label>
+        {/* <label className="block text-sm font-medium">Title Type</label>
         <select
           value={title.titleType}
           onChange={(e) => {
@@ -415,10 +417,10 @@ const UpdateDOIForm: FC<DOIFormProp> = ({ action, doiId }) => {
           <option value="">Select Title Type</option>
           <option value="Main">Main</option>
           <option value="Subtitle">Subtitle</option>
-        </select>
+        </select> */}
       </div>
       <div className="mt-2">
-        <label className="block text-sm font-medium">Language</label>
+        {/* <label className="block text-sm font-medium">Language</label>
         <select
           value={title.language}
           onChange={(e) => {
@@ -436,7 +438,7 @@ const UpdateDOIForm: FC<DOIFormProp> = ({ action, doiId }) => {
                 {name}
               </option>
             ))}
-        </select>
+        </select> */}
       </div>
     </div>
   );
@@ -645,7 +647,9 @@ const UpdateDOIForm: FC<DOIFormProp> = ({ action, doiId }) => {
           {titles.map((title, index) => renderTitleFields(title, index))}
           <button
             type="button"
-            onClick={() => setTitles([...titles, { title: "", titleType: "", language: "" }])}
+            onClick={() => setTitles([...titles, { title: "",
+              //  titleType: "", language: ""
+               }])}
             className="inline-flex items-center px-3 py-2 border border-blue-500 text-blue-500 rounded hover:bg-blue-500 hover:text-white"
           >
             Add another title

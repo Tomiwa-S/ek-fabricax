@@ -31,7 +31,7 @@ export default function SignButton(){
 
   return (
   <Suspense>
-    {isLoggedIn ?
+    {(true || isLoggedIn) ?
           <span className="bg-blue-500 text-white 
           cursor-pointer 
           rounded-full px-4 py-2 absolute right-2 top-4"
