@@ -1,7 +1,7 @@
 
 'use client'
 import { useEffect, useState } from 'react';
-import {apiBaseURL} from '../../globalVariables';
+import SignButton from '@/app/components/signButton';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { excludeKeys } from './exclude';
@@ -39,6 +39,7 @@ export default function DoiPage() {
   const [attributes, setAttribues] = useState<any>(false);
   const skipFields = ['xml','container', 'schemaVersion','source',...excludeKeys];
   const linkKeys = ['url']
+  const dates = ['created','registered','updated']
 
 
   async function fetchDOI() {
@@ -60,6 +61,7 @@ export default function DoiPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 flex items-center justify-center p-4">
+      <SignButton/>
       <div className='fixed top-4 left-2'>
         <form className='bg-white p-2 rounded-md pr-12'>
         <Link href={'/doi'} className="block mb-[2rem] my-6 text-black font-semibold text-lg border-b border-gray-200 pb-1 mb-3">
@@ -100,6 +102,9 @@ export default function DoiPage() {
                 ) : (
                   linkKeys.includes(key) ?
                   <Link href={value.toString()} target='_blank'>{value.toString()}</Link>
+                  :
+                  dates.includes(key)? 
+                  new Date(value).toLocaleString()
                   :
                   value.toString()
                 )}

@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef, ChangeEvent } from "react";
 import { handleBaseUrl } from "../globalVariables";
 import Link from "next/link";
+import SignButton from "../components/signButton";
 
 interface doiList {
     title: string;
@@ -74,6 +75,7 @@ export default function Page() {
     
     return (
       <div className={`w-full grid grid-cols-5 min-h-screen p-4 flex ${effect}`}>
+        <SignButton/>
         <div className="p-4 col-span-1">
           <div className="fixed w-[14rem] p-4 text-black bg-[rgba(255,255,255,0.5)] p-3 py-4 rounded-md">
 
