@@ -6,7 +6,7 @@ import SignButton from "../components/signButton";
 
 interface doiList {
     title: string;
-    publicationYear: Number;
+    publicationYear: number;
     doi: string;
     author: string;
     state:'draft'|'registered'|'findable';
